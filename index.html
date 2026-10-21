@@ -3,26 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mahsoob - محسوب</title>
+    <title>Mahsoob - محسوب | حاسبة وتتبع السعرات</title>
     
     <!-- الخطوط والرموز -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- 1. مكتبة قارئ الباركود بالكاميرا -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <style>
         :root {
-            --bg-main: #0b0718;
-            --card-bg: #160f2e;
-            --card-border: #2a1b54;
-            --neon-purple: #a855f7;
-            --glow-purple: rgba(168, 85, 247, 0.4);
+            --bg-main: #0a0714;
+            --card-bg: #130d24;
+            --card-border: #261947;
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.4);
             --accent-green: #10b981;
             --accent-blue: #3b82f6;
             --accent-orange: #f59e0b;
             --accent-red: #ef4444;
-            --text-main: #f3f4f6;
+            --text-main: #f9fafb;
             --text-muted: #9ca3af;
         }
 
@@ -37,12 +35,123 @@
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
-            padding-bottom: 90px;
             min-height: 100vh;
+            padding-bottom: 90px;
         }
 
+        /* شاشة الترحيب والإعداد */
+        .onboarding-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-main);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        .brand-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 15px var(--primary-glow));
+        }
+
+        .brand-tagline {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .brand-joke {
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .form-step {
+            width: 100%;
+            max-width: 380px;
+            display: none;
+        }
+
+        .form-step.active { display: block; }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control, select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-control:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--primary-glow);
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-primary:active { transform: scale(0.97); }
+
+        .btn-google {
+            background: #ffffff;
+            color: #111827;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* الهيدر الرئيسي */
         header {
-            background: rgba(22, 15, 46, 0.85);
+            background: rgba(19, 13, 36, 0.85);
             backdrop-filter: blur(12px);
             padding: 16px 20px;
             display: flex;
@@ -54,28 +163,36 @@
             z-index: 100;
         }
 
-        header h1 {
-            font-size: 1.5rem;
+        .header-title {
+            font-size: 1.4rem;
             font-weight: 900;
-            color: var(--neon-purple);
-            text-shadow: 0 0 12px var(--glow-purple);
+            color: var(--primary);
         }
 
-        .user-badge {
-            background: rgba(168, 85, 247, 0.15);
-            border: 1px solid var(--neon-purple);
+        .user-pill {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid var(--primary);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.8rem;
-            color: var(--text-main);
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(99, 102, 241, 0.05));
+            border: 1px dashed var(--primary);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #e0e7ff;
+        }
+
+        /* الواجهة الرئيسية */
         .container {
-            max-width: 500px;
+            max-width: 480px;
             margin: auto;
             padding: 15px;
         }
@@ -86,67 +203,63 @@
             border-radius: 20px;
             padding: 20px;
             margin-bottom: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
 
-        /* حلقة الطاقة والسعرات */
-        .calorie-ring-box {
+        .ring-container {
             position: relative;
-            width: 170px;
-            height: 170px;
-            margin: 10px auto;
+            width: 180px;
+            height: 180px;
+            margin: 15px auto;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .calorie-ring-box svg {
+        .ring-container svg {
             width: 100%;
             height: 100%;
             transform: rotate(-90deg);
         }
 
-        .calorie-ring-box circle {
+        .ring-container circle {
             fill: none;
             stroke-width: 12;
             stroke-linecap: round;
         }
 
-        .bg-circle { stroke: rgba(255, 255, 255, 0.05); }
-        .progress-circle {
-            stroke: var(--neon-purple);
+        .ring-bg { stroke: rgba(255, 255, 255, 0.05); }
+        .ring-bar {
+            stroke: var(--primary);
             stroke-dasharray: 440;
             stroke-dashoffset: 440;
-            transition: stroke-dashoffset 0.5s ease;
-            filter: drop-shadow(0 0 6px var(--neon-purple));
+            transition: stroke-dashoffset 0.6s ease;
+            filter: drop-shadow(0 0 8px var(--primary));
         }
 
-        .ring-text {
+        .ring-info {
             position: absolute;
             text-align: center;
         }
 
-        .ring-text span {
-            display: block;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--text-main);
+        .ring-info h2 {
+            font-size: 2rem;
+            font-weight: 900;
         }
 
-        .ring-text small {
-            color: var(--text-muted);
+        .ring-info p {
             font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
-        /* الماكروز */
-        .macros-grid {
+        .macros-box {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin-top: 15px;
         }
 
-        .macro-card {
+        .macro-item {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 12px 8px;
@@ -154,89 +267,33 @@
             text-align: center;
         }
 
-        .macro-card strong {
+        .macro-item span {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .macro-item strong {
             display: block;
             font-size: 0.95rem;
             margin-top: 4px;
         }
 
-        /* الأزرار */
-        .btn-action {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 14px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            box-shadow: 0 4px 15px var(--glow-purple);
-            transition: transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-action:active { transform: scale(0.97); }
-
-        /* قائمة الوجبات */
-        .meal-item {
+        .meal-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
             padding: 12px 15px;
             border-radius: 12px;
             margin-bottom: 8px;
         }
 
-        /* نافذة الباركود والمودال */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(11, 7, 24, 0.95);
-            z-index: 1000;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .modal.active {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #reader {
-            width: 100%;
-            max-width: 380px;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid var(--neon-purple);
-            box-shadow: 0 0 20px var(--glow-purple);
-        }
-
-        .product-result-box {
-            background: #1e143b;
-            border: 1px solid var(--neon-purple);
-            border-radius: 16px;
-            padding: 15px;
-            margin-top: 15px;
-            width: 100%;
-            max-width: 380px;
-            display: none;
-        }
-
-        /* الشريط السفلي */
         nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
-            background: rgba(22, 15, 46, 0.95);
+            background: rgba(19, 13, 36, 0.95);
             backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-around;
@@ -259,364 +316,348 @@
         }
 
         nav button.active {
-            color: var(--neon-purple);
-            text-shadow: 0 0 8px var(--glow-purple);
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
         }
 
-        .tab-page { display: none; }
-        .tab-page.active { display: block; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 7, 20, 0.95);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 360px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid var(--primary);
+        }
     </style>
 </head>
 <body>
 
+    <!-- نافذة الإعداد وتحديث البيانات لأول مرة -->
+    <div id="onboarding-modal" class="onboarding-screen">
+        <div class="brand-logo">Mahsoob</div>
+        <p class="brand-tagline">تطبيقك الفريد لتتبع السعرات والماكروز</p>
+        <p class="brand-joke">لا تخربها.. ترى كل شيء محسووووب! 😉🔥</p>
+
+        <!-- الخطوة 1: تسجيل الدخول -->
+        <div id="step-auth" class="form-step active">
+            <button class="btn-google" onclick="loginWithGoogle()">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                الدخول المباشر بحساب Google
+            </button>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 10px 0;">أو استمر كزائر</p>
+            <button class="btn-primary" style="background: #374151;" onclick="goToStep('body-info')">متابعة كزائر</button>
+        </div>
+
+        <!-- الخطوة 2: القياسات الشخصية -->
+        <div id="step-body-info" class="form-step">
+            <h3 style="margin-bottom: 15px;">البيانات الجسمانية</h3>
+            <div class="form-group">
+                <label>الطول (سم)</label>
+                <input type="number" id="input-height" class="form-control" placeholder="175" value="174">
+            </div>
+            <div class="form-group">
+                <label>الوزن الحالي (كجم)</label>
+                <input type="number" id="input-weight" class="form-control" placeholder="70" value="74">
+            </div>
+            <div class="form-group">
+                <label>العمر</label>
+                <input type="number" id="input-age" class="form-control" placeholder="23" value="23">
+            </div>
+            <button class="btn-primary" onclick="goToStep('goals')">التالي</button>
+        </div>
+
+        <!-- الخطوة 3: الأهداف والمكرو -->
+        <div id="step-goals" class="form-step">
+            <h3 style="margin-bottom: 15px;">هدف اللياقة والنظام</h3>
+            <div class="form-group">
+                <label>الهدف الرئيسي</label>
+                <select id="select-goal">
+                    <option value="lose">خسارة وزن (تنشيف)</option>
+                    <option value="maintain" selected>محافظة على الوزن</option>
+                    <option value="gain">زيادة وزن (تضخيم)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>توزيع العناصر (المكرو المفضل)</label>
+                <select id="select-macro">
+                    <option value="high-protein">بروتين أعلى (للبناء العضلي)</option>
+                    <option value="high-carb">كارب أعلى (للطاقة والنشاط)</option>
+                    <option value="balanced" selected>متوازن صحي</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="finishOnboarding()">إتمام وابدأ استخدام التطبيق 🚀</button>
+        </div>
+    </div>
+
+    <!-- الهيدر -->
     <header>
-        <h1>Mahsoob</h1>
-        <div class="user-badge" id="auth-btn" onclick="handleAuth()">
-            <span>👤</span> <span id="user-name-display">تسجيل الدخول</span>
+        <div class="header-title">Mahsoob</div>
+        <div class="user-pill" onclick="reopenSetup()">
+            👤 <span id="user-display">إعدادات الحساب</span>
         </div>
     </header>
 
     <div class="container">
         
-        <!-- صفحة الرئيسية -->
+        <!-- بنر الترحيب والمزحة -->
+        <div class="welcome-banner">
+            أهلاً بك! انتبه لأكلك.. ترى كل شيء محسووووب 😉🔥
+        </div>
+
+        <!-- الرئيسية -->
         <div id="page-home" class="tab-page active">
             <div class="card" style="text-align: center;">
                 <p style="color: var(--text-muted); font-size: 0.85rem;">المتبقي من السعرات اليومية</p>
                 
-                <div class="calorie-ring-box">
+                <div class="ring-container">
                     <svg viewBox="0 0 160 160">
-                        <circle class="bg-circle" cx="80" cy="80" r="70"></circle>
-                        <circle id="ring-progress" class="progress-circle" cx="80" cy="80" r="70"></circle>
+                        <circle class="ring-bg" cx="80" cy="80" r="70"></circle>
+                        <circle id="ring-bar" class="ring-bar" cx="80" cy="80" r="70"></circle>
                     </svg>
-                    <div class="ring-text">
-                        <span id="cal-remaining">2,300</span>
-                        <small>kcal متبقي</small>
+                    <div class="ring-info">
+                        <h2 id="cal-remaining">2,300</h2>
+                        <p>kcal متبقي</p>
                     </div>
                 </div>
 
-                <div class="macros-grid">
-                    <div class="macro-card">
-                        <small style="color: var(--accent-green);">البروتين</small>
-                        <strong id="prot-count">0 / 140g</strong>
+                <div class="macros-box">
+                    <div class="macro-item">
+                        <span style="color: var(--accent-green);">البروتين</span>
+                        <strong id="prot-val">0 / 150g</strong>
                     </div>
-                    <div class="macro-card">
-                        <small style="color: var(--accent-orange);">الدهون</small>
-                        <strong id="fat-count">0 / 65g</strong>
+                    <div class="macro-item">
+                        <span style="color: var(--accent-orange);">الدهون</span>
+                        <strong id="fat-val">0 / 65g</strong>
                     </div>
-                    <div class="macro-card">
-                        <small style="color: var(--accent-blue);">الكارب</small>
-                        <strong id="carb-count">0 / 280g</strong>
+                    <div class="macro-item">
+                        <span style="color: var(--accent-blue);">الكارب</span>
+                        <strong id="carb-val">0 / 250g</strong>
                     </div>
                 </div>
 
-                <button class="btn-action" onclick="openScanner()">
-                    <span>📷</span> مسح باركود منتج بالذكاء الاصطناعي
+                <button class="btn-primary" onclick="openScanner()">
+                    📷 مسح باركود منتج بالذكاء الاصطناعي
                 </button>
             </div>
 
-            <!-- قائمة وجبات اليوم -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <h3>وجبات اليوم</h3>
-                    <span id="cal-consumed-total" style="color: var(--accent-orange); font-weight: bold; font-size: 0.9rem;">0 kcal</span>
+                    <span id="cal-consumed" style="color: var(--accent-orange); font-weight: bold;">0 kcal</span>
                 </div>
-                <div id="meals-container">
+                <div id="meals-list">
                     <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">
                         لا توجد وجبات مسجلة اليوم. اضغط الكاميرا لبدء المسح!
                     </p>
                 </div>
             </div>
         </div>
-
-        <!-- صفحة التقدم -->
-        <div id="page-progress" class="tab-page">
-            <div class="card">
-                <h3>متابعة الوزن</h3>
-                <h2 style="color: var(--neon-purple); margin: 10px 0; font-size: 2rem;" id="weight-display">72.0 kg</h2>
-                <button class="btn-action" onclick="updateWeight()">تحديث الوزن الحالي</button>
-            </div>
-            <div class="card">
-                <h3>تتبع استهلاك الماء</h3>
-                <p style="margin-top: 8px; color: var(--text-muted);" id="water-display">0 / 2.5 لتر</p>
-                <button class="btn-action" style="background: var(--accent-blue);" onclick="addWater()">+ إضافة كوب ماء (250ml)</button>
-            </div>
-        </div>
-
-        <!-- صفحة الإعدادات -->
-        <div id="page-settings" class="tab-page">
-            <div class="card">
-                <h3>حالة الحساب</h3>
-                <p style="margin-top: 8px; color: var(--text-muted);" id="account-status">حساب زائر محلي (بياناتك محفوظة على هذا الجهاز)</p>
-                <button class="btn-action" onclick="handleAuth()">تسجيل الدخول بـ Google للحفظ السحابي</button>
-            </div>
-        </div>
-
     </div>
 
-    <!-- نافذة قارئ الباركود المنبثقة -->
+    <!-- نافذة الكاميرا -->
     <div id="scanner-modal" class="modal">
-        <h3 style="color: white; margin-bottom: 15px;">وجه الكاميرا نحو باركود المنتج</h3>
-        
+        <h3 style="color: white; margin-bottom: 15px;">مسح باركود المنتج</h3>
         <div id="reader"></div>
-
-        <div id="product-result" class="product-result-box">
-            <h4 id="prod-title" style="color: var(--neon-purple);">جاري البحث...</h4>
-            <p id="prod-brand" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 10px;"></p>
-            
-            <div class="macros-grid" style="margin-bottom: 10px;">
-                <div class="macro-card"><small>بروتين</small><strong id="p-val" style="color: var(--accent-green);">0g</strong></div>
-                <div class="macro-card"><small>دهون</small><strong id="f-val" style="color: var(--accent-orange);">0g</strong></div>
-                <div class="macro-card"><small>كارب</small><strong id="c-val" style="color: var(--accent-blue);">0g</strong></div>
-            </div>
-
-            <button class="btn-action" onclick="addScannedProduct()">إضافة للوجبات اليومية</button>
-        </div>
-
-        <button class="btn-action" style="background: #374151; margin-top: 10px;" onclick="closeScanner()">إلغاء</button>
+        <button class="btn-primary" style="background: #374151; margin-top: 15px; max-width: 360px;" onclick="closeScanner()">إلغاء</button>
     </div>
 
-    <!-- الشريط السفلي للتنقل -->
-    <nav>
-        <button id="nav-home" class="active" onclick="switchTab('home')"><span>🏠</span>الرئيسية</button>
-        <button id="nav-progress" onclick="switchTab('progress')"><span>📈</span>التقدم</button>
-        <button id="nav-settings" onclick="switchTab('settings')"><span>⚙️</span>الإعدادات</button>
-    </nav>
-
-    <!-- 2. استدعاء ومستودع Firebase السحابي المجاني -->
+    <!-- نافذة Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // إعدادات مشروع Firebase (يمكنك استبدال المفاتيح بمشروعك الخاص لاحقاً)
         const firebaseConfig = {
-            apiKey: "AIzaSyDemoKeyForMahsoobAppDynamicAuth",
-            authDomain: "mahsoob-app.firebaseapp.com",
-            projectId: "mahsoob-app",
-            storageBucket: "mahsoob-app.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:demo"
+            apiKey: "AIzaSyBkYr5eeYfSo3rvFddxP3OMyStQ-ltMSzc",
+            authDomain: "mahsob-4b5dd.firebaseapp.com",
+            projectId: "mahsob-4b5dd",
+            storageBucket: "mahsob-4b5dd.firebasestorage.app",
+            messagingSenderId: "467626317525",
+            appId: "1:467626317525:web:8929de83184e05a53e745c",
+            measurementId: "G-F36LSTEPD0"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        window.currentUser = null;
+        window.loginWithGoogle = async function() {
+            const provider = new GoogleAuthProvider();
+            try {
+                const res = await signInWithPopup(auth, provider);
+                window.currentUser = res.user;
+                document.getElementById('user-display').innerText = res.user.displayName.split(' ')[0];
+                goToStep('body-info');
+            } catch(e) {
+                alert("تعذر تسجيل الدخول بـ Google");
+            }
+        };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.currentUser = user;
-                document.getElementById('user-name-display').innerText = user.displayName || "مستخدم محفوظ";
-                document.getElementById('account-status').innerText = "مسجل بـ: " + user.email;
-                await syncCloudData();
-            } else {
-                window.currentUser = null;
-                document.getElementById('user-name-display').innerText = "تسجيل الدخول";
-                document.getElementById('account-status').innerText = "حساب زائر محلي (بياناتك محفوظة محلياً)";
+                document.getElementById('user-display').innerText = user.displayName ? user.displayName.split(' ')[0] : "حسابي";
             }
         });
-
-        window.handleAuth = async function() {
-            if (window.currentUser) {
-                if (confirm("هل ترغب في تسجيل الخروج؟")) {
-                    await signOut(auth);
-                }
-            } else {
-                const provider = new GoogleAuthProvider();
-                try {
-                    await signInWithPopup(auth, provider);
-                } catch (e) {
-                    alert("تعذر الاتصال بـ Google حالياً. بياناتك محفوظة على هذا الجوال محلياً.");
-                }
-            }
-        };
-
-        window.syncCloudData = async function() {
-            if (!window.currentUser) return;
-            const ref = doc(db, "users", window.currentUser.uid);
-            const snap = await getDoc(ref);
-            if (snap.exists()) {
-                const data = snap.data();
-                if (data.appState) {
-                    window.appState = data.appState;
-                    window.saveData();
-                    window.renderUI();
-                }
-            }
-        };
-
-        window.saveCloudData = async function() {
-            if (!window.currentUser) return;
-            try {
-                await setDoc(doc(db, "users", window.currentUser.uid), {
-                    appState: window.appState,
-                    lastUpdated: new Date()
-                });
-            } catch(e) { console.log("Cloud sync fallback to local"); }
-        };
     </script>
 
-    <!-- 3. كود منطق التطبيق والتفاعل الرئيسي -->
     <script>
-        // الحالة العامة للتطبيق
-        window.appState = JSON.parse(localStorage.getItem('mahsoob_data')) || {
-            targetCalories: 2300,
-            consumedCalories: 0,
-            protein: 0,
-            fat: 0,
-            carbs: 0,
-            weight: 72.0,
-            water: 0,
-            meals: []
-        };
+        let userProfile = JSON.parse(localStorage.getItem('mahsoob_profile')) || null;
+        let mealsData = JSON.parse(localStorage.getItem('mahsoob_meals')) || [];
 
-        let html5QrcodeScanner = null;
-        let activeScannedProduct = null;
+        function initApp() {
+            if (!userProfile) {
+                document.getElementById('onboarding-modal').style.display = 'flex';
+            } else {
+                document.getElementById('onboarding-modal').style.display = 'none';
+                calculateMacros();
+                renderUI();
+            }
+        }
 
-        function saveData() {
-            localStorage.setItem('mahsoob_data', JSON.stringify(window.appState));
-            if (window.saveCloudData) window.saveCloudData();
+        function goToStep(stepId) {
+            document.querySelectorAll('.form-step').forEach(e => e.classList.remove('active'));
+            document.getElementById(`step-${stepId}`).classList.add('active');
+        }
+
+        function finishOnboarding() {
+            const h = parseFloat(document.getElementById('input-height').value) || 174;
+            const w = parseFloat(document.getElementById('input-weight').value) || 74;
+            const age = parseFloat(document.getElementById('input-age').value) || 23;
+            const goal = document.getElementById('select-goal').value;
+            const macro = document.getElementById('select-macro').value;
+
+            userProfile = { height: h, weight: w, age: age, goal: goal, macro: macro };
+            localStorage.setItem('mahsoob_profile', JSON.stringify(userProfile));
+
+            document.getElementById('onboarding-modal').style.display = 'none';
+            calculateMacros();
+            renderUI();
+        }
+
+        function reopenSetup() {
+            document.getElementById('onboarding-modal').style.display = 'flex';
+            goToStep('body-info');
+        }
+
+        function calculateMacros() {
+            if (!userProfile) return;
+            let bmr = (10 * userProfile.weight) + (6.25 * userProfile.height) - (5 * userProfile.age) + 5;
+            let tdee = bmr * 1.375;
+
+            if (userProfile.goal === 'lose') tdee -= 400;
+            if (userProfile.goal === 'gain') tdee += 400;
+
+            userProfile.targetCalories = Math.round(tdee);
+
+            if (userProfile.macro === 'high-protein') {
+                userProfile.targetProtein = Math.round(userProfile.weight * 2.2);
+                userProfile.targetFat = Math.round((tdee * 0.25) / 9);
+            } else if (userProfile.macro === 'high-carb') {
+                userProfile.targetProtein = Math.round(userProfile.weight * 1.6);
+                userProfile.targetFat = Math.round((tdee * 0.20) / 9);
+            } else {
+                userProfile.targetProtein = Math.round(userProfile.weight * 1.8);
+                userProfile.targetFat = Math.round((tdee * 0.25) / 9);
+            }
+
+            let protCal = userProfile.targetProtein * 4;
+            let fatCal = userProfile.targetFat * 9;
+            userProfile.targetCarbs = Math.round((tdee - (protCal + fatCal)) / 4);
         }
 
         function renderUI() {
-            const state = window.appState;
-            const remaining = Math.max(0, state.targetCalories - state.consumedCalories);
-            
+            if (!userProfile) return;
+
+            let consumedCal = mealsData.reduce((acc, m) => acc + m.cal, 0);
+            let consumedProt = mealsData.reduce((acc, m) => acc + m.p, 0);
+            let consumedFat = mealsData.reduce((acc, m) => acc + m.f, 0);
+            let consumedCarbs = mealsData.reduce((acc, m) => acc + m.c, 0);
+
+            let remaining = Math.max(0, userProfile.targetCalories - consumedCal);
+
             document.getElementById('cal-remaining').innerText = remaining.toLocaleString();
-            document.getElementById('cal-consumed-total').innerText = state.consumedCalories + " kcal";
-            
-            document.getElementById('prot-count').innerText = `${state.protein} / 140g`;
-            document.getElementById('fat-count').innerText = `${state.fat} / 65g`;
-            document.getElementById('carb-count').innerText = `${state.carbs} / 280g`;
+            document.getElementById('cal-consumed').innerText = consumedCal + " kcal";
 
-            document.getElementById('weight-display').innerText = state.weight + " kg";
-            document.getElementById('water-display').innerText = (state.water / 1000).toFixed(2) + " / 2.5 لتر";
+            document.getElementById('prot-val').innerText = `${consumedProt} / ${userProfile.targetProtein}g`;
+            document.getElementById('fat-val').innerText = `${consumedFat} / ${userProfile.targetFat}g`;
+            document.getElementById('carb-val').innerText = `${consumedCarbs} / ${userProfile.targetCarbs}g`;
 
-            // تحديث حلقة التقدم الدائرية
-            const circle = document.getElementById('ring-progress');
-            const percent = Math.min(1, state.consumedCalories / state.targetCalories);
-            const offset = 440 - (440 * percent);
-            circle.style.strokeDashoffset = offset;
+            const circle = document.getElementById('ring-bar');
+            const percent = Math.min(1, consumedCal / userProfile.targetCalories);
+            circle.style.strokeDashoffset = 440 - (440 * percent);
 
-            // عرض قائمة الوجبات
-            const container = document.getElementById('meals-container');
-            if (state.meals.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد وجبات مسجلة اليوم. اضغط الكاميرا لبدء المسح!</p>`;
+            const list = document.getElementById('meals-list');
+            if (mealsData.length === 0) {
+                list.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد وجبات مسجلة اليوم. اضغط الكاميرا لبدء المسح!</p>`;
             } else {
-                container.innerHTML = state.meals.map((m) => `
-                    <div class="meal-item">
+                list.innerHTML = mealsData.map(m => `
+                    <div class="meal-card">
                         <div>
-                            <strong style="font-size: 0.9rem;">${m.name}</strong>
+                            <strong>${m.name}</strong>
                             <div style="font-size: 0.75rem; color: var(--text-muted);">ب: ${m.p}g | د: ${m.f}g | ك: ${m.c}g</div>
                         </div>
-                        <span style="color: var(--accent-orange); font-weight: bold; font-size: 0.9rem;">${m.cal} kcal</span>
+                        <span style="color: var(--accent-orange); font-weight: bold;">${m.cal} kcal</span>
                     </div>
                 `).join('');
             }
         }
 
-        // قارئ الباركود والربط مع Open Food Facts API
+        let html5QrcodeScanner = null;
         function openScanner() {
             document.getElementById('scanner-modal').classList.add('active');
-            document.getElementById('product-result').style.display = 'none';
-
-            if (!html5QrcodeScanner) {
-                html5QrcodeScanner = new Html5Qrcode("reader");
-            }
-
-            html5QrcodeScanner.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 150 } },
-                onScanSuccess
-            ).catch(() => alert("يرجى إعطاء صلاحية الكاميرا لمسح باركود الوجبة."));
+            if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
+            html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 200 }, onScanSuccess);
         }
 
         function closeScanner() {
             if (html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => {
-                    document.getElementById('scanner-modal').classList.remove('active');
-                }).catch(() => document.getElementById('scanner-modal').classList.remove('active'));
+                html5QrcodeScanner.stop().then(() => document.getElementById('scanner-modal').classList.remove('active'));
             } else {
                 document.getElementById('scanner-modal').classList.remove('active');
             }
         }
 
         async function onScanSuccess(barcode) {
-            html5QrcodeScanner.pause(true);
-            const resBox = document.getElementById('product-result');
-            resBox.style.display = 'block';
-            document.getElementById('prod-title').innerText = "جاري قراءة المنتجات...";
-            document.getElementById('prod-brand').innerText = "رمز الباركود: " + barcode;
-
+            closeScanner();
             try {
-                // طلب البيانات من Open Food Facts API
                 const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
                 const data = await res.json();
-
                 if (data.status === 1) {
                     const prod = data.product;
                     const nuts = prod.nutriments || {};
                     const name = prod.product_name_ar || prod.product_name || "منتج غذائي";
-                    const cal = Math.round(nuts['energy-kcal_100g'] || nuts['energy-kcal'] || 0);
+                    const cal = Math.round(nuts['energy-kcal_100g'] || 0);
                     const p = Math.round(nuts.proteins_100g || 0);
                     const f = Math.round(nuts.fat_100g || 0);
                     const c = Math.round(nuts.carbohydrates_100g || 0);
 
-                    activeScannedProduct = { name, cal, p, f, c };
-
-                    document.getElementById('prod-title').innerText = name + ` (${cal} kcal / 100g)`;
-                    document.getElementById('prod-brand').innerText = prod.brands ? "الشركة: " + prod.brands : "";
-                    document.getElementById('p-val').innerText = p + "g";
-                    document.getElementById('f-val').innerText = f + "g";
-                    document.getElementById('c-val').innerText = c + "g";
+                    mealsData.unshift({ name, cal, p, f, c });
+                    localStorage.setItem('mahsoob_meals', JSON.stringify(mealsData));
+                    renderUI();
                 } else {
-                    document.getElementById('prod-title').innerText = "المنتج غير مسجل في قاعدة البيانات العالمية";
+                    alert("المنتج غير مسجل في قاعدة البيانات العالمية");
                 }
-            } catch (err) {
-                document.getElementById('prod-title').innerText = "خطأ في جلب بيانات المنتج";
-            }
+            } catch(e) { alert("خطأ في الاتصال بالشبكة"); }
         }
 
-        function addScannedProduct() {
-            if (!activeScannedProduct) return;
-            const p = activeScannedProduct;
-            window.appState.consumedCalories += p.cal;
-            window.appState.protein += p.p;
-            window.appState.fat += p.f;
-            window.appState.carbs += p.c;
-            window.appState.meals.unshift(p);
-
-            saveData();
-            renderUI();
-            closeScanner();
-        }
-
-        function updateWeight() {
-            const w = prompt("أدخل وزنك الحالي بالكيلوجرام:", window.appState.weight);
-            if (w && !isNaN(w)) {
-                window.appState.weight = parseFloat(w);
-                saveData();
-                renderUI();
-            }
-        }
-
-        function addWater() {
-            window.appState.water += 250;
-            saveData();
-            renderUI();
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(e => e.classList.remove('active'));
-
-            document.getElementById(`page-${tab}`).classList.add('active');
-            document.getElementById(`nav-${tab}`).classList.add('active');
-        }
-
-        // تشغيل واجهة التطبيق فور فتح الملف
-        renderUI();
+        initApp();
     </script>
 </body>
 </html>
