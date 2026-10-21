@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mahsoob - محسوب | حاسبة وتتبع السعرات</title>
     
-    <!-- الخطوط والرموز -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
@@ -39,7 +38,6 @@
             padding-bottom: 90px;
         }
 
-        /* شاشة الترحيب والإعداد */
         .onboarding-screen {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -87,7 +85,7 @@
         .form-step.active { display: block; }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             text-align: right;
         }
 
@@ -100,12 +98,12 @@
 
         .form-control, select {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 14px;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
             transition: 0.3s;
         }
@@ -119,7 +117,7 @@
             background: linear-gradient(135deg, #8b5cf6, #6d28d9);
             color: white;
             border: none;
-            padding: 16px;
+            padding: 14px;
             border-radius: 14px;
             font-size: 1rem;
             font-weight: 800;
@@ -149,7 +147,6 @@
             margin-bottom: 15px;
         }
 
-        /* الهيدر الرئيسي */
         header {
             background: rgba(19, 13, 36, 0.85);
             backdrop-filter: blur(12px);
@@ -190,7 +187,6 @@
             color: #e0e7ff;
         }
 
-        /* الواجهة الرئيسية */
         .container {
             max-width: 480px;
             margin: auto;
@@ -290,34 +286,69 @@
             margin-bottom: 8px;
         }
 
-        nav {
+        /* الزر العائم + لإنشاء الوجبات */
+        .fab-add {
             position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: rgba(19, 13, 36, 0.95);
-            backdrop-filter: blur(12px);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            border-top: 1px solid var(--card-border);
-            z-index: 99;
-        }
-
-        nav button {
-            background: none;
+            bottom: 25px;
+            left: 25px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
             border: none;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
             cursor: pointer;
+            z-index: 999;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            transition: transform 0.2s;
         }
 
-        nav button.active {
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary-glow);
+        .fab-add:active { transform: scale(0.9); }
+
+        /* خيارات تسجيل الوجبة شبيهة بتطبيق كالي */
+        .add-options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 15px;
+        }
+
+        .option-card {
+            background: #1c1533;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option-card:hover {
+            border-color: var(--primary);
+            background: #231a40;
+        }
+
+        .option-card span {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .option-card h4 {
+            font-size: 0.95rem;
+            color: white;
+        }
+
+        .option-card p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
 
         .modal {
@@ -348,13 +379,12 @@
 </head>
 <body>
 
-    <!-- نافذة الإعداد وتحديث البيانات لأول مرة -->
+    <!-- شاشة الإعداد الأولية -->
     <div id="onboarding-modal" class="onboarding-screen">
         <div class="brand-logo">Mahsoob</div>
         <p class="brand-tagline">تطبيقك الفريد لتتبع السعرات والماكروز</p>
         <p class="brand-joke">لا تخربها.. ترى كل شيء محسووووب! 😉🔥</p>
 
-        <!-- الخطوة 1: تسجيل الدخول -->
         <div id="step-auth" class="form-step active">
             <button class="btn-google" onclick="loginWithGoogle()">
                 <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
@@ -364,7 +394,6 @@
             <button class="btn-primary" style="background: #374151;" onclick="goToStep('body-info')">متابعة كزائر</button>
         </div>
 
-        <!-- الخطوة 2: القياسات الشخصية -->
         <div id="step-body-info" class="form-step">
             <h3 style="margin-bottom: 15px;">البيانات الجسمانية</h3>
             <div class="form-group">
@@ -382,7 +411,6 @@
             <button class="btn-primary" onclick="goToStep('goals')">التالي</button>
         </div>
 
-        <!-- الخطوة 3: الأهداف والمكرو -->
         <div id="step-goals" class="form-step">
             <h3 style="margin-bottom: 15px;">هدف اللياقة والنظام</h3>
             <div class="form-group">
@@ -415,12 +443,10 @@
 
     <div class="container">
         
-        <!-- بنر الترحيب والمزحة -->
         <div class="welcome-banner">
             أهلاً بك! انتبه لأكلك.. ترى كل شيء محسووووب 😉🔥
         </div>
 
-        <!-- الرئيسية -->
         <div id="page-home" class="tab-page active">
             <div class="card" style="text-align: center;">
                 <p style="color: var(--text-muted); font-size: 0.85rem;">المتبقي من السعرات اليومية</p>
@@ -450,10 +476,6 @@
                         <strong id="carb-val">0 / 250g</strong>
                     </div>
                 </div>
-
-                <button class="btn-primary" onclick="openScanner()">
-                    📷 مسح باركود منتج بالذكاء الاصطناعي
-                </button>
             </div>
 
             <div class="card">
@@ -463,21 +485,74 @@
                 </div>
                 <div id="meals-list">
                     <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">
-                        لا توجد وجبات مسجلة اليوم. اضغط الكاميرا لبدء المسح!
+                        لا توجد وجبات مسجلة اليوم. اضغط (+) بالأسفل لإضافة وجبة!
                     </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- نافذة الكاميرا -->
+    <!-- الزر العائم لإضافة وجبة جديدة -->
+    <button class="fab-add" onclick="openAddMenu()">+</button>
+
+    <!-- نافذة اختيار طريقة تسجيل الوجبة -->
+    <div id="menu-modal" class="modal">
+        <h3 style="color: white; margin-bottom: 20px;">سجّل وجبة جديدة</h3>
+        
+        <div class="add-options-grid">
+            <div class="option-card" onclick="openManualInput()">
+                <span>✏️</span>
+                <h4>إدخال يدوي</h4>
+                <p>أدخل القيم بنفسك</p>
+            </div>
+            <div class="option-card" onclick="openScanner()">
+                <span>📸</span>
+                <h4>صور الباركود</h4>
+                <p>للمنتجات المعلبة</p>
+            </div>
+        </div>
+
+        <button class="btn-primary" style="background: #374151; max-width: 380px;" onclick="closeModal('menu-modal')">إلغاء</button>
+    </div>
+
+    <!-- نافذة الإدخال اليدوي -->
+    <div id="manual-modal" class="modal">
+        <div style="width: 100%; max-width: 380px; text-align: right;">
+            <h3 style="color: white; margin-bottom: 15px; text-align: center;">إدخال وجبة يدويًا</h3>
+            
+            <div class="form-group">
+                <label>اسم الوجبة / المنتج</label>
+                <input type="text" id="m-name" class="form-control" placeholder="مثال: صدر دجاج مشوي">
+            </div>
+            <div class="form-group">
+                <label>السعرات الحرارية (kcal)</label>
+                <input type="number" id="m-cal" class="form-control" placeholder="250">
+            </div>
+            <div class="form-group">
+                <label>البروتين (جرام)</label>
+                <input type="number" id="m-prot" class="form-control" placeholder="30">
+            </div>
+            <div class="form-group">
+                <label>الدهون (جرام)</label>
+                <input type="number" id="m-fat" class="form-control" placeholder="5">
+            </div>
+            <div class="form-group">
+                <label>الكاربوهيدرات (جرام)</label>
+                <input type="number" id="m-carb" class="form-control" placeholder="0">
+            </div>
+
+            <button class="btn-primary" onclick="saveManualMeal()">حفظ الوجبة</button>
+            <button class="btn-primary" style="background: #374151;" onclick="closeModal('manual-modal')">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- نافذة قارئ الباركود -->
     <div id="scanner-modal" class="modal">
         <h3 style="color: white; margin-bottom: 15px;">مسح باركود المنتج</h3>
         <div id="reader"></div>
         <button class="btn-primary" style="background: #374151; margin-top: 15px; max-width: 360px;" onclick="closeScanner()">إلغاء</button>
     </div>
 
-    <!-- نافذة Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -504,9 +579,7 @@
                 window.currentUser = res.user;
                 document.getElementById('user-display').innerText = res.user.displayName.split(' ')[0];
                 goToStep('body-info');
-            } catch(e) {
-                alert("تعذر تسجيل الدخول بـ Google");
-            }
+            } catch(e) { alert("تعذر تسجيل الدخول بـ Google"); }
         };
 
         onAuthStateChanged(auth, async (user) => {
@@ -605,7 +678,7 @@
 
             const list = document.getElementById('meals-list');
             if (mealsData.length === 0) {
-                list.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد وجبات مسجلة اليوم. اضغط الكاميرا لبدء المسح!</p>`;
+                list.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد وجبات مسجلة اليوم. اضغط (+) بالأسفل لإضافة وجبة!</p>`;
             } else {
                 list.innerHTML = mealsData.map(m => `
                     <div class="meal-card">
@@ -619,8 +692,41 @@
             }
         }
 
+        function openAddMenu() { document.getElementById('menu-modal').classList.add('active'); }
+        function openManualInput() { 
+            closeModal('menu-modal'); 
+            document.getElementById('manual-modal').classList.add('active'); 
+        }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function saveManualMeal() {
+            const name = document.getElementById('m-name').value || "وجبة إضافية";
+            const cal = parseInt(document.getElementById('m-cal').value) || 0;
+            const p = parseInt(document.getElementById('m-prot').value) || 0;
+            const f = parseInt(document.getElementById('m-fat').value) || 0;
+            const c = parseInt(document.getElementById('m-carb').value) || 0;
+
+            if (cal <= 0) {
+                alert("يرجى إدخال السعرات الحرارية للوجبة!");
+                return;
+            }
+
+            mealsData.unshift({ name, cal, p, f, c });
+            localStorage.setItem('mahsoob_meals', JSON.stringify(mealsData));
+            renderUI();
+            
+            // إعادة ضبط الخانات وإغلاق النافذة
+            document.getElementById('m-name').value = '';
+            document.getElementById('m-cal').value = '';
+            document.getElementById('m-prot').value = '';
+            document.getElementById('m-fat').value = '';
+            document.getElementById('m-carb').value = '';
+            closeModal('manual-modal');
+        }
+
         let html5QrcodeScanner = null;
         function openScanner() {
+            closeModal('menu-modal');
             document.getElementById('scanner-modal').classList.add('active');
             if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
             html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 200 }, onScanSuccess);
@@ -628,9 +734,9 @@
 
         function closeScanner() {
             if (html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => document.getElementById('scanner-modal').classList.remove('active'));
+                html5QrcodeScanner.stop().then(() => closeModal('scanner-modal'));
             } else {
-                document.getElementById('scanner-modal').classList.remove('active');
+                closeModal('scanner-modal');
             }
         }
 
